@@ -1,20 +1,15 @@
-package rest
+package main
 
 import (
 	"net/http"
 	"salimon/tina-core/middlewares"
-	"strings"
-	"time"
+	"salimon/tina-core/types"
 
 	"github.com/labstack/echo/v4"
 )
 
-type interactSchema struct {
-	Data string `json:"data" validate:"required"`
-}
-
 func InteractHandler(ctx echo.Context) error {
-	payload := new(interactSchema)
+	payload := new(types.InteractSchema)
 	if err := ctx.Bind(payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
 	}
@@ -28,16 +23,15 @@ func InteractHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, vError)
 	}
 
-	tokens := strings.Fields(payload.Data)
+	// user := ctx.Get("user").(*types.User)
 
-	ctx.Response().Header().Set("Content-Type", "text/plain")
-	ctx.Response().WriteHeader(http.StatusOK)
+	data := payload.Data
 
-	for _, token := range tokens {
-		ctx.Response().Write([]byte(token + "\n"))
-		ctx.Response().Flush()
-		time.Sleep(50 * time.Millisecond)
+	response := make([]types.Message, len(data)+1)
+	for i := 0; i < len(data); i++ {
+		message := types.Message{From: data[i].From, Body: data[i].Body}
+		response[i] = message
 	}
-
-	return nil
+	response[len(response)-1] = types.Message{From: "tina", Body: "Hello!"}
+	return ctx.JSON(http.StatusOK, response)
 }
