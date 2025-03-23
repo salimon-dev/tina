@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"salimon/tina-core/types"
+	"salimon/tina/types"
 	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file" // Import file driver

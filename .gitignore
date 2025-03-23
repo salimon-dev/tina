@@ -1,5 +1,6 @@
 .env
 data/
 bootstrap
+tina
 go.sum
 __debug*

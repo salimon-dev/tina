@@ -1,4 +1,4 @@
-module salimon/tina-core
+module salimon/tina
 
 go 1.22.1
 
