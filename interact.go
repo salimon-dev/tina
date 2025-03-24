@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"salimon/tina/helpers"
 	"salimon/tina/middlewares"
+	"salimon/tina/openai"
 	"salimon/tina/types"
 
 	"github.com/labstack/echo/v4"
@@ -23,10 +26,10 @@ func InteractHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, vError)
 	}
 
-	response := types.Message{
-		From: "tina",
-		Type: types.MessageTypePlain,
-		Body: "hello!",
+	response, err := openai.SendCompletionRequest(payload.Data)
+	if err != nil {
+		fmt.Println(err)
+		return helpers.InternalError(ctx)
 	}
 	return ctx.JSON(http.StatusOK, response)
 }
