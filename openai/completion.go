@@ -6,9 +6,9 @@ import (
 	"salimon/tina/types"
 )
 
-func ParseMessages(message []types.Message) []CompletionMessage {
-	result := make([]CompletionMessage, len(message))
-	for i, m := range message {
+func ParseMessages(messages []types.Message) []CompletionMessage {
+	result := make([]CompletionMessage, len(messages))
+	for i, m := range messages {
 		role := m.From
 		content := m.Body
 		if role != "user" {
