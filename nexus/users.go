@@ -3,7 +3,7 @@ package nexus
 import (
 	"encoding/json"
 	"fmt"
-	"salimon/tina-core/types"
+	"salimon/tina/types"
 
 	"github.com/google/uuid"
 )

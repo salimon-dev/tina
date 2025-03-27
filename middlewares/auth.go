@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"fmt"
-	"salimon/tina-core/db"
-	"salimon/tina-core/helpers"
-	"salimon/tina-core/nexus"
-	"salimon/tina-core/types"
+	"salimon/tina/db"
+	"salimon/tina/helpers"
+	"salimon/tina/nexus"
+	"salimon/tina/types"
 	"strings"
 	"time"
 

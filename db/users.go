@@ -1,7 +1,7 @@
 package db
 
 import (
-	"salimon/tina-core/types"
+	"salimon/tina/types"
 
 	"gorm.io/gorm"
 )

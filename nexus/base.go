@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"salimon/tina-core/helpers"
+	"salimon/tina/helpers"
 )
 
 func getNexusBaseURL() string {

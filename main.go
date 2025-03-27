@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"salimon/tina-core/db"
-	"salimon/tina-core/middlewares"
+	"salimon/tina/db"
+	"salimon/tina/middlewares"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
