@@ -10,20 +10,19 @@ services:
       - .env
     ports:
       - "3001:80"
-    networks:
-      - tina-dev
-  pgsql:
-    image: postgres:alpine
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootpassword
-      POSTGRES_DB: tina
-    ports:
-      - "4001:5432"
-    volumes:
-      - ./data:/var/lib/postgresql/data
-    networks:
-      - tina-dev
-
-networks:
-  tina-dev:
+    # networks:
+    #   - tina-dev
+  # pgsql:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: rootpassword
+  #     POSTGRES_DB: tina
+  #   ports:
+  #     - "4001:5432"
+  #   volumes:
+  #     - ./data:/var/lib/postgresql/data
+  #   networks:
+  #     - tina-dev
+# networks:
+#   tina-dev:
