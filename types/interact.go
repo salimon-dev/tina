@@ -9,5 +9,5 @@ type Message struct {
 }
 
 type InteractSchema struct {
-	Data []Message `json:"data" validate:"required"`
+	Data []Message `json:"data" validate:"required,dive"`
 }
