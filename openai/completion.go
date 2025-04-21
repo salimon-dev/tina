@@ -8,24 +8,12 @@ import (
 
 const EMBED_LIMIT = 3
 
-func ParseMessages(messages []types.Message) []CompletionMessage {
-	result := make([]CompletionMessage, len(messages))
-	for i, m := range messages {
-		role := m.From
-		content := m.Body
-		if role != "user" {
-			role = "assistant"
-		}
-		result[i] = CompletionMessage{
-			Role:    role,
-			Content: content,
-		}
-	}
-	return result
-}
-
 func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
-	completionMessages := ParseMessages(messages)
+	completionMessages, err := ParseMessages(messages)
+	if err != nil {
+		return nil, err
+	}
+
 	params := CompletionParams{
 		Messages:            completionMessages,
 		Model:               "gpt-4o-mini",
@@ -54,7 +42,7 @@ func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
 		tools[0] = CompletionTool{
 			Type: "function",
 			Function: CompletionFunction{
-				Name:        action.Type,
+				Name:        action.Name,
 				Description: action.Description,
 				Strict:      true,
 				Parameters:  action.Parameters,
@@ -88,9 +76,54 @@ func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
 	}
 
 	choice := completionResponse.Choices[0]
+
+	if choice.Message.Content != "" {
+		return &types.Message{
+			From: "tina",
+			Type: "plain",
+			Body: choice.Message.Content,
+		}, nil
+	}
+
+	if choice.Message.ToolCalls == nil {
+		return nil, errors.New("no tool call found")
+	}
+	if len(choice.Message.ToolCalls) == 0 {
+		return nil, errors.New("no tool call found")
+	}
+	toolCall := choice.Message.ToolCalls[0]
+	messageType := toolCall.Function.Name
+	argumentsStr := toolCall.Function.Arguments
+	callId := toolCall.Id
+
+	var arguments json.RawMessage
+	err = json.Unmarshal([]byte(argumentsStr), &arguments)
+
+	if err != nil {
+		return nil, errors.New("invalid function arguments")
+	}
+
+	type MetaType struct {
+		CallId string `json:"call_id"`
+	}
+	type Body struct {
+		Meta      MetaType        `json:"meta"`
+		Arguments json.RawMessage `json:"arguments"`
+	}
+
+	body := Body{
+		Meta:      MetaType{CallId: callId},
+		Arguments: arguments,
+	}
+
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return nil, errors.New("invalid function arguments")
+	}
+
 	return &types.Message{
 		From: "tina",
-		Type: types.MessageTypePlain,
-		Body: choice.Message.Content,
+		Type: messageType,
+		Body: string(bodyBytes),
 	}, nil
 }

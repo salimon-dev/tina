@@ -53,7 +53,7 @@ func LoadActions() {
 func SendEmbeddingRequest(input string) ([]float64, error) {
 	params := EmbedParams{
 		Input: input,
-		Model: "text-embedding-3-small",
+		Model: "text-embedding-3-large",
 	}
 
 	paramsData, err := json.Marshal(params)
@@ -90,7 +90,7 @@ func GetBestAction(vectors []float64) *Action {
 	var bestAction *Action
 	bestDistance := math.MaxFloat64
 	for _, action := range Actions {
-		dist := GetActionsDistance(vectors, action.Vector)
+		dist := GetActionsDistance(vectors, action.Vectors)
 		if dist < bestDistance {
 			bestDistance = dist
 			bestAction = action

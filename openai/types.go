@@ -3,8 +3,21 @@ package openai
 import "encoding/json"
 
 type CompletionMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role       string               `json:"role"`
+	ToolCallId string               `json:"tool_call_id"`
+	Content    string               `json:"content"`
+	ToolCalls  []CompletionToolCall `json:"tool_calls"`
+}
+
+type CompletionToolCall struct {
+	Id       string                     `json:"id"`
+	Type     string                     `json:"type"`
+	Function CompletionToolCallFunction `json:"function"`
+}
+
+type CompletionToolCallFunction struct {
+	Name      string `json:"name"`
+	Arguments string `json:"arguments"`
 }
 
 type CompletionFunction struct {
@@ -71,9 +84,9 @@ type EmbeddingResponse struct {
 }
 
 type Action struct {
-	Type        string          `json:"type"`
+	Name        string          `json:"name"`
 	Description string          `json:"description"`
 	Meta        string          `json:"meta"`
 	Parameters  json.RawMessage `json:"parameters"`
-	Vector      []float64       `json:"vector"`
+	Vectors     []float64       `json:"vectors"`
 }
