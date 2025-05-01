@@ -3,84 +3,59 @@ package openai
 import (
 	"encoding/json"
 	"errors"
-	"salimon/tina/types"
+
+	"github.com/salimon-dev/gomsg"
 )
 
-func ParseActionResult(message *types.Message) (*CompletionMessage, error) {
+func ParseActionResult(message *gomsg.Message) (*CompletionMessage, error) {
 	var result CompletionMessage
-	bodyStr := message.Body
-	type MetaType struct {
-		CallId string `json:"call_id"`
-	}
-	type ActionResultType struct {
-		Meta      MetaType        `json:"meta"`
-		Arguments json.RawMessage `json:"arguments"`
-	}
 
-	var body ActionResultType
-	err := json.Unmarshal([]byte(bodyStr), &body)
-	if err != nil {
-		return nil, err
-	}
 	result.Role = "tool"
+	result.ToolCallId = message.Meta.ActionId
+	content, err := json.Marshal(message.Result)
 
-	content, err := json.Marshal(body.Arguments)
 	if err != nil {
 		return nil, err
 	}
 	result.Content = string(content)
-	result.ToolCallId = body.Meta.CallId
+
 	return &result, nil
 }
 
-func ParseActionCall(message *types.Message) (*CompletionMessage, error) {
+func ParseActionCall(message *gomsg.Message) (*CompletionMessage, error) {
 	var result CompletionMessage
 
-	bodyStr := message.Body
-	type MetaType struct {
-		CallId string `json:"call_id"`
-	}
-	type ActionResultType struct {
-		Meta      MetaType        `json:"meta"`
-		Arguments json.RawMessage `json:"arguments"`
-	}
-
-	var body ActionResultType
-	err := json.Unmarshal([]byte(bodyStr), &body)
-	if err != nil {
-		return nil, err
-	}
-
-	argumentsStr, err := json.Marshal(body.Arguments)
-	if err != nil {
-		return nil, err
-	}
-
 	result.Role = "assistant"
+
+	arguments, err := json.Marshal(message.Parameters)
+	if err != nil {
+		return nil, err
+	}
+
 	toolCall := CompletionToolCall{
 		Type: "function",
-		Id:   body.Meta.CallId,
+		Id:   message.Meta.ActionId,
 		Function: CompletionToolCallFunction{
 			Name:      message.Type,
-			Arguments: string(argumentsStr),
+			Arguments: string(arguments),
 		},
 	}
 	result.ToolCalls = []CompletionToolCall{toolCall}
 	return &result, nil
 }
 
-func ParsePlainMessage(message *types.Message) (*CompletionMessage, error) {
+func ParsePlainMessage(message *gomsg.Message) (*CompletionMessage, error) {
 	var result CompletionMessage
 	if message.From == "user" {
 		result.Role = "user"
 	} else {
 		result.Role = "assistant"
 	}
-	result.Content = message.Body
+	result.Content = *message.Body
 	return &result, nil
 }
 
-func ParseSingleMessage(message *types.Message) (*CompletionMessage, error) {
+func ParseSingleMessage(message *gomsg.Message) (*CompletionMessage, error) {
 	if message == nil {
 		return nil, errors.New("message is nil")
 	}
@@ -94,7 +69,7 @@ func ParseSingleMessage(message *types.Message) (*CompletionMessage, error) {
 	return ParsePlainMessage(message)
 }
 
-func ParseMessages(messages []types.Message) ([]CompletionMessage, error) {
+func ParseMessages(messages []gomsg.Message) ([]CompletionMessage, error) {
 	result := make([]CompletionMessage, len(messages))
 	for i, m := range messages {
 		parsedMessage, err := ParseSingleMessage(&m)

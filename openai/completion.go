@@ -3,12 +3,15 @@ package openai
 import (
 	"encoding/json"
 	"errors"
-	"salimon/tina/types"
+
+	"github.com/salimon-dev/gomsg"
 )
 
 const EMBED_LIMIT = 3
 
-func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
+func SendCompletionRequest(schema *gomsg.InteractionSchema) (*gomsg.Message, error) {
+
+	messages := schema.Data
 	completionMessages, err := ParseMessages(messages)
 	if err != nil {
 		return nil, err
@@ -23,7 +26,7 @@ func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
 
 	// embed messages to get embedding vector
 	messageLen := min(len(messages), EMBED_LIMIT)
-	embeddingMessages := make([]types.Message, messageLen)
+	embeddingMessages := make([]gomsg.Message, messageLen)
 	for i := 0; i < messageLen; i++ {
 		embeddingMessages[i] = messages[len(messages)-i-1]
 	}
@@ -78,10 +81,10 @@ func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
 	choice := completionResponse.Choices[0]
 
 	if choice.Message.Content != "" {
-		return &types.Message{
+		return &gomsg.Message{
 			From: "tina",
 			Type: "plain",
-			Body: choice.Message.Content,
+			Body: &choice.Message.Content,
 		}, nil
 	}
 
@@ -96,34 +99,16 @@ func SendCompletionRequest(messages []types.Message) (*types.Message, error) {
 	argumentsStr := toolCall.Function.Arguments
 	callId := toolCall.Id
 
-	var arguments json.RawMessage
-	err = json.Unmarshal([]byte(argumentsStr), &arguments)
+	var parameters gomsg.Parameters
+	err = json.Unmarshal([]byte(argumentsStr), &parameters)
 
-	if err != nil {
-		return nil, errors.New("invalid function arguments")
-	}
-
-	type MetaType struct {
-		CallId string `json:"call_id"`
-	}
-	type Body struct {
-		Meta      MetaType        `json:"meta"`
-		Arguments json.RawMessage `json:"arguments"`
-	}
-
-	body := Body{
-		Meta:      MetaType{CallId: callId},
-		Arguments: arguments,
-	}
-
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return nil, errors.New("invalid function arguments")
-	}
-
-	return &types.Message{
+	return &gomsg.Message{
 		From: "tina",
 		Type: messageType,
-		Body: string(bodyBytes),
+		Meta: &gomsg.Meta{
+			ActionId: callId,
+		},
+		Parameters: &parameters,
 	}, nil
+
 }
