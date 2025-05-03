@@ -2,34 +2,36 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"salimon/tina/helpers"
-	"salimon/tina/middlewares"
 	"salimon/tina/openai"
-	"salimon/tina/types"
 
 	"github.com/labstack/echo/v4"
+	"github.com/salimon-dev/gomsg"
 )
 
 func InteractHandler(ctx echo.Context) error {
-	payload := new(types.InteractSchema)
-	if err := ctx.Bind(payload); err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
-	}
-
-	// validation errors
-	vError, err := middlewares.ValidatePayload(*payload)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
-	}
-	if vError != nil {
-		return ctx.JSON(http.StatusBadRequest, vError)
-	}
-
-	response, err := openai.SendCompletionRequest(payload.Data)
+	requestBody, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
 		fmt.Println(err)
 		return helpers.InternalError(ctx)
 	}
-	return ctx.JSON(http.StatusOK, response)
+
+	schema, errs := gomsg.ParseInteractionSchema(requestBody)
+
+	if errs != nil {
+		return ctx.JSON(http.StatusBadRequest, errs)
+	}
+
+	data, err := openai.SendCompletionRequest(schema)
+	if err != nil {
+		fmt.Println(err)
+		return helpers.InternalError(ctx)
+	}
+
+	result := gomsg.InteractionSchema{
+		Data: []gomsg.Message{*data},
+	}
+	return ctx.JSON(http.StatusOK, result)
 }

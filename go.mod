@@ -17,6 +17,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/salimon-dev/gomsg v0.0.6 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 )
 

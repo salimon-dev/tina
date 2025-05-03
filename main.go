@@ -5,6 +5,7 @@ import (
 	"os"
 	"salimon/tina/db"
 	"salimon/tina/middlewares"
+	"salimon/tina/openai"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -17,6 +18,7 @@ func main() {
 		fmt.Println("no environment file, using session defaults")
 	}
 	db.SetupDatabase()
+	openai.LoadActions()
 	e := echo.New()
 	e.HideBanner = true
 	// Middleware
