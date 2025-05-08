@@ -41,6 +41,8 @@ github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/salimon-dev/gomsg v0.0.6 h1:9ECfFF5NjVPsQlOvqoIQQ4+XImUNGlb9s2yEWlYutfE=
 github.com/salimon-dev/gomsg v0.0.6/go.mod h1:w4O04q9ou9eKyvaDQCy36jJn9JUnM7UAlGO3g9E8bOA=
+github.com/salimon-dev/gomsg v0.1.1 h1:8xGCU0s9sORL4rY28A6SnJFn+GZel/9oVkW8fl6rhiQ=
+github.com/salimon-dev/gomsg v0.1.1/go.mod h1:w4O04q9ou9eKyvaDQCy36jJn9JUnM7UAlGO3g9E8bOA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
