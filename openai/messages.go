@@ -3,6 +3,7 @@ package openai
 import (
 	"encoding/json"
 	"errors"
+	"salimon/tina/types"
 
 	"github.com/salimon-dev/gomsg"
 )
@@ -44,32 +45,32 @@ func ParseActionCall(message *gomsg.Message) (*CompletionMessage, error) {
 	return &result, nil
 }
 
-func ParsePlainMessage(message *gomsg.Message) (*CompletionMessage, error) {
+func ParsePlainMessage(message *types.Message) (*CompletionMessage, error) {
 	var result CompletionMessage
-	if message.From == "user" {
-		result.Role = "user"
-	} else {
+	if message.Username == "tina" {
 		result.Role = "assistant"
+	} else {
+		result.Role = "user"
 	}
-	result.Content = *message.Body
+	result.Content = message.Body
 	return &result, nil
 }
 
-func ParseSingleMessage(message *gomsg.Message) (*CompletionMessage, error) {
+func ParseSingleMessage(message *types.Message) (*CompletionMessage, error) {
 	if message == nil {
 		return nil, errors.New("message is nil")
 	}
-	if message.Type == "actionResult" {
-		return ParseActionResult(message)
-	}
-	if message.Type != "plain" {
-		return ParseActionCall(message)
-	}
+	// if message.Type == "actionResult" {
+	// 	return ParseActionResult(message)
+	// }
+	// if message.Type != "plain" {
+	// 	return ParseActionCall(message)
+	// }
 	// message is plain
 	return ParsePlainMessage(message)
 }
 
-func ParseMessages(messages []gomsg.Message) ([]CompletionMessage, error) {
+func ParseMessages(messages []types.Message) ([]CompletionMessage, error) {
 	result := make([]CompletionMessage, len(messages))
 	for i, m := range messages {
 		parsedMessage, err := ParseSingleMessage(&m)

@@ -90,3 +90,7 @@ type Action struct {
 	Parameters  json.RawMessage `json:"parameters"`
 	Vectors     []float64       `json:"vectors"`
 }
+
+type CompletionParsedResponse struct {
+	Body string
+}

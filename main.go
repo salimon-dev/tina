@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"salimon/tina/db"
-	"salimon/tina/middlewares"
 	"salimon/tina/openai"
+	"salimon/tina/webhook"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -30,7 +30,7 @@ func main() {
 	// heartbeat route to check if server is alive
 	e.GET("/", HeartBeatHandler)
 	// interact main route for user interaction
-	e.POST("/interact", InteractHandler, middlewares.AuthMiddleware)
+	e.POST("/webhook", webhook.Handle)
 	// Start the server
 	port := os.Getenv("PORT")
 	if port == "" {
