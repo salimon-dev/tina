@@ -1,6 +1,18 @@
+.aws-sam
+# env layer
 .env
-data/
+.env.production
+.env.development
+.env.local
+
 bootstrap
-tina
-go.sum
+/data
+*-cover.out
+*-cover.html
+
+# deployment configs
+development.toml
+production.toml
+
+nexus
 __debug*
