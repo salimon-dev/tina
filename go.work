@@ -2,5 +2,7 @@ go 1.24.4
 
 use (
 	./lambdas/queue/interact
+	./packages/nexus
+	./packages/openai
 	./packages/types
 )

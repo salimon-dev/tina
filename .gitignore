@@ -14,5 +14,4 @@ bootstrap
 development.toml
 production.toml
 
-nexus
 __debug*

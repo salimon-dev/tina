@@ -3,10 +3,10 @@ package types
 import "github.com/google/uuid"
 
 type Thread struct {
-	Id        uuid.UUID `json:"id" gorm:"type:uuid;primaryKey"`
-	Name      string    `json:"name" gorm:"type:string;size:64"`
-	CreatedAt int64     `json:"created_at" gorm:"type:bigint"`
-	UpdatedAt int64     `json:"updated_at" gorm:"type:bigint"`
+	Id        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt int64     `json:"created_at"`
+	UpdatedAt int64     `json:"updated_at"`
 }
 
 type MessageType uint8
@@ -16,13 +16,14 @@ const (
 )
 
 type Message struct {
-	Id        uuid.UUID   `json:"id" gorm:"type:uuid;primaryKey"`
-	Body      string      `json:"body" gorm:"type:text"`
-	UserId    uuid.UUID   `json:"user_id" gorm:"type:uuid"`
-	ThreadId  uuid.UUID   `json:"thread_id" gorm:"type:uuid"`
-	Type      MessageType `json:"type" gorm:"type:numeric"`
-	CreatedAt int64       `json:"created_at" gorm:"type:bigint"`
-	UpdatedAt int64       `json:"updated_at" gorm:"type:bigint"`
+	Id        uuid.UUID   `json:"id"`
+	Body      string      `json:"body"`
+	UserId    uuid.UUID   `json:"user_id"`
+	Username  string      `json:"username"`
+	ThreadId  uuid.UUID   `json:"thread_id"`
+	Type      MessageType `json:"type"`
+	CreatedAt int64       `json:"created_at"`
+	UpdatedAt int64       `json:"updated_at"`
 }
 
 type ThreadMemberType uint8
@@ -34,9 +35,9 @@ const (
 )
 
 type ThreadMember struct {
-	Id        uuid.UUID `json:"id" gorm:"type:uuid;primaryKey"`
-	UserId    uuid.UUID `json:"user_id" gorm:"type:uuid"`
-	ThreadId  uuid.UUID `json:"thread_id" gorm:"type:uuid"`
-	CreatedAt int64     `json:"created_at" gorm:"type:bigint"`
-	UpdatedAt int64     `json:"updated_at" gorm:"type:bigint"`
+	Id        uuid.UUID `json:"id"`
+	UserId    uuid.UUID `json:"user_id"`
+	ThreadId  uuid.UUID `json:"thread_id"`
+	CreatedAt int64     `json:"created_at"`
+	UpdatedAt int64     `json:"updated_at"`
 }
