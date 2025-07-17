@@ -1,3 +1,6 @@
 go 1.24.4
 
-use ./lambdas/queue/interact
+use (
+	./lambdas/queue/interact
+	./packages/types
+)

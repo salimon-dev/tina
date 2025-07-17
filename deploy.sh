@@ -17,13 +17,13 @@ if [ "$ENV" == "dev" ]; then
   cp ./layers/.env.development ./layers/env/.env
 
   sam build
-  sam deploy  --no-confirm-changeset --config-file ./development.toml
+  sam deploy --no-confirm-changeset --config-file ./development.toml
 else
   rm ./layers/env/.env
   cp ./layers/.env.production ./layers/env/.env
   
   sam build
-  sam deploy  --no-confirm-changeset --config-file ./production.toml
+  sam deploy --no-confirm-changeset --config-file ./production.toml
 fi
 
 echo "Deployment to $ENV completed successfully."
