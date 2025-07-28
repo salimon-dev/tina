@@ -2,9 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
+	"os"
+	"tina/packages/db"
 	"tina/packages/nexus"
 	"tina/packages/openai"
 	"tina/packages/types"
+
+	"github.com/google/uuid"
 )
 
 func HandleEvent(ctx context.Context, event *types.QueueEventInteract) error {
@@ -17,5 +22,27 @@ func HandleEvent(ctx context.Context, event *types.QueueEventInteract) error {
 		return err
 	}
 	err = nexus.SendPlainMessage(event.ThreadId, response.Body)
+	if err != nil {
+		return err
+	}
+
+	username, nexusId := FindUserInfoFromMessages(messages)
+	if username == "" || nexusId.String() == "" {
+		return errors.New("username or nexusId is empty")
+	}
+	err = db.UpdateUserUsage(username, nexusId, response.Usage, types.UserStatusActive)
 	return err
+}
+
+func FindUserInfoFromMessages(messages []types.Message) (string, uuid.UUID) {
+	var username string
+	var nexusId uuid.UUID
+	for _, message := range messages {
+		// TODO: isolate getEnv methods
+		if message.Username != os.Getenv("NEXUS_USERNAME") {
+			username = message.Username
+			nexusId = message.UserId
+		}
+	}
+	return username, nexusId
 }

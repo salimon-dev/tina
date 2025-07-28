@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"tina/packages/db"
 	"tina/packages/types"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -31,5 +32,6 @@ func handler(ctx context.Context, request events.SQSEvent) error {
 
 func main() {
 	godotenv.Load("/opt/.env")
+	db.SetupDatabase()
 	lambda.Start(handler)
 }

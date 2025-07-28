@@ -1,7 +1,9 @@
 go 1.24.4
 
 use (
+	./lambdas/migrate
 	./lambdas/queue/interact
+	./packages/db
 	./packages/nexus
 	./packages/openai
 	./packages/types

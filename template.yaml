@@ -22,6 +22,24 @@ Globals:
         ENV: !Ref Env
 
 Resources:
+  # API Gateway
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub "tina-api-${Env}"
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - "*"
+        AllowHeaders:
+          - "*"
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: main
+      AutoDeploy: true
   # Config layer
   EnvLayer:
     Type: AWS::Serverless::LayerVersion
@@ -86,3 +104,19 @@ Resources:
           Properties:
             Queue: !GetAtt InteractQueue.Arn
             BatchSize: 10
+  Migrate:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Timeout: 30
+      FunctionName: !Sub "tina-${Env}-migrate"
+      CodeUri: lambdas/migrate/
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        CatchAll:
+          Type: HttpApi
+          Properties:
+            Path: /migrate
+            Method: GET
+            ApiId: !Ref HttpApi
