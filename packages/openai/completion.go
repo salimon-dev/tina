@@ -79,6 +79,7 @@ func SendCompletionRequest(messages []types.Message) (*CompletionParsedResponse,
 	choice := completionResponse.Choices[0]
 
 	result := CompletionParsedResponse{}
+	result.Usage = uint64(completionResponse.Usage.TotalTokens)
 
 	if choice.Message.Content != "" {
 		result.Body = choice.Message.Content

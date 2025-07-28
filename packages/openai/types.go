@@ -92,5 +92,6 @@ type Action struct {
 }
 
 type CompletionParsedResponse struct {
-	Body string
+	Body  string
+	Usage uint64
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func GetThreadMessages(threadId string, count uint8) ([]types.Message, error) {
-	responseData, err := SendHttpRequest("GET", fmt.Sprintf("/member/messages?thread_id=%s&page=1&page_size=%d&sort=created_at&order=desc", threadId, count), nil)
+	responseData, err := SendHttpRequest("GET", fmt.Sprintf("/member/messages?thread_id=%s&page_size=%d&sort=created_at&order=desc", threadId, count), nil)
 	if err != nil {
 		return nil, err
 	}
