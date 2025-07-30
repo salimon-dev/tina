@@ -16,12 +16,12 @@ func SendCompletionRequest(messages []types.Message) (*CompletionParsedResponse,
 	}
 
 	params := CompletionParams{
-		Messages:            completionMessages,
-		Model:               "gpt-4o-mini",
-		MaxCompletionTokens: 256,
-		Temperature:         0.2,
+		Messages:    completionMessages,
+		Model:       "gpt-4o-mini",
+		Temperature: 0.2,
 	}
 
+	// TODO: it will be useful in future
 	// // embed messages to get embedding vector
 	// messageLen := min(len(messages), EMBED_LIMIT)
 	// embeddingMessages := make([]gomsg.Message, messageLen)
