@@ -62,7 +62,7 @@ func HandleSingleUser(user types.User) error {
 			return nil
 		}
 	}
-	invoice, err := db.FindInvoice("user_id = ? AND status = ?", user.Id, types.TransactionStatusPending)
+	invoice, err := db.FindInvoice("user_id = ? AND status = ?", user.Id, types.TransactionStatusTypePending)
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -94,7 +94,7 @@ func SubmitInvoice(usageCredit uint64, user *types.User) {
 		TransactionId: transaction.Id,
 		Amount:        transaction.Amount,
 		Fee:           transaction.Fee,
-		Status:        types.TransactionStatusPending,
+		Status:        types.TransactionStatusTypePending,
 		Details:       "services provided from tina",
 	}
 	err = db.InsertInvoice(invoice)

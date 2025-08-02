@@ -41,3 +41,25 @@ type ThreadMember struct {
 	CreatedAt int64     `json:"created_at"`
 	UpdatedAt int64     `json:"updated_at"`
 }
+type TransactionStatusType int8
+
+const (
+	TransactionStatusTypePending  TransactionStatusType = 1
+	TransactionStatusTypeDone     TransactionStatusType = 2
+	TransactionStatusTypeRejected TransactionStatusType = 3
+)
+
+type Transaction struct {
+	Id             uuid.UUID             `json:"id"`
+	SourceId       uuid.UUID             `json:"source_id"`
+	TargetId       uuid.UUID             `json:"target_id"`
+	Category       string                `json:"category"`
+	Description    string                `json:"description"`
+	Amount         uint64                `json:"amount"`
+	Fee            uint64                `json:"fee"`
+	Status         TransactionStatusType `json:"status"`
+	CreatedAt      int64                 `json:"created_at"`
+	UpdatedAt      int64                 `json:"updated_at"`
+	SourceUsername string                `json:"source_username"`
+	TargetUsername string                `json:"target_username"`
+}

@@ -15,17 +15,29 @@ import (
 func handler(ctx context.Context, request events.SQSEvent) error {
 	for _, record := range request.Records {
 		fmt.Printf("SQS message body: %s\n", record.Body)
-		var event types.QueueEventInteract
+		var event types.BaseEvent
 		err := json.Unmarshal([]byte(record.Body), &event)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		switch event.Type {
-		case types.QueueEventInteractTypeThreadUpdate:
-			err = HandleThreadUpdateEvent(ctx, &event)
-		case types.QueueEventInteractTypeTransaction:
-			err = HandleTransactionEvent(ctx, &event)
+		switch event.Action {
+		case "THREAD":
+			var threadEvent types.ThreadEvent
+			err = json.Unmarshal([]byte(record.Body), &threadEvent)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			err = HandleThreadUpdateEvent(ctx, &threadEvent)
+		case "TRANSACTION":
+			var transactionEvent types.TransactionEvent
+			err = json.Unmarshal([]byte(record.Body), &transactionEvent)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			err = HandleTransactionEvent(ctx, &transactionEvent)
 		}
 		if err != nil {
 			fmt.Println(err)

@@ -1,15 +1,21 @@
 package types
 
-type QueueEventInteractType string
+type BaseEvent struct {
+	Action string `json:"action"`
+}
 
-const (
-	QueueEventInteractTypeThreadUpdate QueueEventInteractType = "THREAD_UPDATE"
-	QueueEventInteractTypeTransaction  QueueEventInteractType = "TRANSACTION"
-)
+type ThreadEvent struct {
+	Action string `json:"action"`
+	Type   string `json:"type"`
+	Thread Thread `json:"thread"`
+}
 
-type QueueEventInteract struct {
-	Type          QueueEventInteractType `json:"type"`
-	TransactionId string                 `json:"transaction_id"`
-	ThreadId      string                 `json:"thread_id"`
-	Origin        string                 `json:"origin"`
+type MessageEvent struct {
+	Action  string  `json:"action"`
+	Message Message `json:"message"`
+}
+
+type TransactionEvent struct {
+	Action      string      `json:"action"`
+	Transaction Transaction `json:"transaction"`
 }
