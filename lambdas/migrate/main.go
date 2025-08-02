@@ -13,6 +13,7 @@ import (
 func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	// migrate db schemas
 	db.DB.AutoMigrate(types.User{})
+	db.DB.AutoMigrate(types.Invoice{})
 	return events.APIGatewayV2HTTPResponse{StatusCode: 200, Body: "migration complete"}, nil
 }
 

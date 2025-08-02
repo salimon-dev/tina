@@ -21,7 +21,12 @@ func handler(ctx context.Context, request events.SQSEvent) error {
 			fmt.Println(err)
 			continue
 		}
-		err = HandleEvent(ctx, &event)
+		switch event.Type {
+		case types.QueueEventInteractTypeThreadUpdate:
+			err = HandleThreadUpdateEvent(ctx, &event)
+		case types.QueueEventInteractTypeTransaction:
+			err = HandleTransactionEvent(ctx, &event)
+		}
 		if err != nil {
 			fmt.Println(err)
 			continue

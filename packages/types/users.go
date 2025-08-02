@@ -15,16 +15,16 @@ const (
 )
 
 type User struct {
-	Id            uuid.UUID  `json:"id" gorm:"type:uuid;primaryKey"`
-	Username      string     `json:"username" gorm:"size:32;unique;not null"`
-	NexusId       uuid.UUID  `json:"nexus_id" gorm:"type:uuid"`
-	Status        UserStatus `json:"status" gorm:"type:numeric"`
-	Usage         uint64     `json:"usage" gorm:"type:bigint"`
-	CreditDebt    uint64     `json:"credit_debt" gorm:"type:bigint"`
-	DebtSoftLimit uint64     `json:"debt_soft_limit" gorm:"type:bigint"`
-	DebtHardLimit uint64     `json:"debt_hard_limit" gorm:"type:bigint"`
-	CreatedAt     int64      `json:"created_at" gorm:"type:bigint"`
-	UpdatedAt     int64      `json:"updated_at" gorm:"type:bigint"`
+	Id             uuid.UUID  `json:"id" gorm:"type:uuid;primaryKey"`
+	Username       string     `json:"username" gorm:"size:32;unique;not null"`
+	NexusId        uuid.UUID  `json:"nexus_id" gorm:"type:uuid"`
+	Status         UserStatus `json:"status" gorm:"type:numeric"`
+	Usage          uint64     `json:"usage" gorm:"type:bigint"`
+	UsageSoftLimit uint64     `json:"usage_soft_limit" gorm:"type:bigint"`
+	UsageHardLimit uint64     `json:"usage_hard_limit" gorm:"type:bigint"`
+	Credit         uint64     `json:"credit_debt" gorm:"type:bigint"`
+	CreatedAt      int64      `json:"created_at" gorm:"type:bigint"`
+	UpdatedAt      int64      `json:"updated_at" gorm:"type:bigint"`
 }
 
 func (r *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -35,4 +35,8 @@ func (r *User) BeforeCreate(tx *gorm.DB) (err error) {
 func (r *User) BeforeUpdate(tx *gorm.DB) (err error) {
 	r.UpdatedAt = time.Now().Unix()
 	return nil
+}
+
+func CreditFromUsage(usage uint64) uint64 {
+	return usage / 1000
 }

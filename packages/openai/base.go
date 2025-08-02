@@ -38,7 +38,7 @@ func SendHttpRequest(method string, path string, body []byte) ([]byte, error) {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		fmt.Println(responseBody)
+		fmt.Println(string(responseBody))
 		return nil, fmt.Errorf("Request failed with status code %d", res.StatusCode)
 	}
 

@@ -38,21 +38,16 @@ func FindUsers(query interface{}, offset int, limit int, args ...interface{}) ([
 	return users, result.Error
 }
 
-func CreditFromUsage(usage uint64) uint64 {
-	return usage / 1000
-}
-
 func RegisterUser(username string, nexusId uuid.UUID, defaultUsage uint64, status types.UserStatus) (*types.User, error) {
 	user := types.User{
-		Id:         uuid.New(),
-		Username:   username,
-		NexusId:    nexusId,
-		Status:     status,
-		CreditDebt: CreditFromUsage(defaultUsage),
-		// TODO: make this configurable from env
-		DebtSoftLimit: 500,
-		DebtHardLimit: 1000,
-		Usage:         defaultUsage,
+		Id:             uuid.New(),
+		Username:       username,
+		NexusId:        nexusId,
+		Status:         status,
+		Credit:         0,
+		UsageSoftLimit: 500000,
+		UsageHardLimit: 10000000,
+		Usage:          defaultUsage,
 	}
 	err := InsertUser(&user)
 	return &user, err
@@ -70,7 +65,7 @@ func UpdateUserUsage(username string, nexusId uuid.UUID, usage uint64, status ty
 		return err
 	}
 	user.Usage += usage
-	user.CreditDebt = CreditFromUsage(user.Usage)
+	user.Credit = types.CreditFromUsage(user.Usage)
 	result := DB.Save(&user)
 	return result.Error
 }

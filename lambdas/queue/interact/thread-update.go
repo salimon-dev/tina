@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"tina/packages/db"
 	"tina/packages/nexus"
@@ -12,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandleEvent(ctx context.Context, event *types.QueueEventInteract) error {
+func HandleThreadUpdateEvent(ctx context.Context, event *types.QueueEventInteract) error {
 	messages, err := nexus.GetLastMessages(event.ThreadId)
 	if err != nil {
 		return err
@@ -21,6 +22,7 @@ func HandleEvent(ctx context.Context, event *types.QueueEventInteract) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("passed the completion")
 	err = nexus.SendPlainMessage(event.ThreadId, response.Body)
 	if err != nil {
 		return err

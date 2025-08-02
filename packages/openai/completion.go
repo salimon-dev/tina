@@ -16,9 +16,10 @@ func SendCompletionRequest(messages []types.Message) (*CompletionParsedResponse,
 	}
 
 	params := CompletionParams{
-		Messages:    completionMessages,
-		Model:       "gpt-4o-mini",
-		Temperature: 0.2,
+		Messages:            completionMessages,
+		MaxCompletionTokens: 500,
+		Model:               "gpt-4o-mini",
+		Temperature:         0.2,
 	}
 
 	// TODO: it will be useful in future
@@ -61,7 +62,6 @@ func SendCompletionRequest(messages []types.Message) (*CompletionParsedResponse,
 		return nil, err
 	}
 	response, err := SendHttpRequest("POST", "/v1/chat/completions", paramsData)
-
 	if err != nil {
 		return nil, err
 	}

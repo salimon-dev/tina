@@ -120,3 +120,19 @@ Resources:
             Path: /migrate
             Method: GET
             ApiId: !Ref HttpApi
+  Invoices:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Timeout: 30
+      FunctionName: !Sub "tina-${Env}-invoices"
+      CodeUri: lambdas/invoices/
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        ScheduledInvocation:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 */12 * * ? *)
+            Name: !Sub "tina-${Env}-invoices-schedule"
+            Description: "check users usage every 12 hours"
