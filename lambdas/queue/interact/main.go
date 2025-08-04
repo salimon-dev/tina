@@ -22,14 +22,22 @@ func handler(ctx context.Context, request events.SQSEvent) error {
 			continue
 		}
 		switch event.Action {
-		case "THREAD":
-			var threadEvent types.ThreadEvent
-			err = json.Unmarshal([]byte(record.Body), &threadEvent)
+		// case "THREAD":
+		// 	var threadEvent types.ThreadEvent
+		// 	err = json.Unmarshal([]byte(record.Body), &threadEvent)
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 		continue
+		// 	}
+		// 	err = HandleThreadEvent(ctx, &threadEvent)
+		case "MESSAGE":
+			var messageEvent types.MessageEvent
+			err = json.Unmarshal([]byte(record.Body), &messageEvent)
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
-			err = HandleThreadUpdateEvent(ctx, &threadEvent)
+			err = HandleMessageEvent(ctx, &messageEvent)
 		case "TRANSACTION":
 			var transactionEvent types.TransactionEvent
 			err = json.Unmarshal([]byte(record.Body), &transactionEvent)

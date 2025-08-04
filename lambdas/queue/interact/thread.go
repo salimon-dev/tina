@@ -13,8 +13,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandleThreadUpdateEvent(ctx context.Context, event *types.ThreadEvent) error {
-	messages, err := nexus.GetLastMessages(event.Thread.Id.String())
+func HandleMessageEvent(ctx context.Context, event *types.MessageEvent) error {
+	messages, err := nexus.GetLastMessages(event.Message.ThreadId.String())
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ func HandleThreadUpdateEvent(ctx context.Context, event *types.ThreadEvent) erro
 		return err
 	}
 	fmt.Println("passed the completion")
-	err = nexus.SendPlainMessage(event.Thread.Id.String(), response.Body)
+	err = nexus.SendPlainMessage(event.Message.ThreadId.String(), response.Body)
 	if err != nil {
 		return err
 	}

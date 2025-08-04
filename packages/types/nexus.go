@@ -12,7 +12,8 @@ type Thread struct {
 type MessageType uint8
 
 const (
-	MessageTypeText MessageType = 1
+	MessageTypeText        MessageType = 1
+	MessageTypeTransaction MessageType = 2
 )
 
 type Message struct {

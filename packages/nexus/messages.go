@@ -44,12 +44,14 @@ func GetLastMessages(threadId string) ([]types.Message, error) {
 
 func SendPlainMessage(threadId string, body string) error {
 	type Payload struct {
-		ThreadId string `json:"thread_id"`
-		Body     string `json:"body"`
+		ThreadId string            `json:"thread_id"`
+		Body     string            `json:"body"`
+		Type     types.MessageType `json:"type"`
 	}
 	payload := Payload{
 		ThreadId: threadId,
 		Body:     body,
+		Type:     types.MessageTypeText,
 	}
 
 	payloadBytes, err := json.Marshal(payload)
