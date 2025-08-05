@@ -2,11 +2,20 @@ package types
 
 import "github.com/google/uuid"
 
+type ThreadCategory uint8
+
+const (
+	ThreadCategoryChat    ThreadCategory = 1
+	ThreadCategroyPayment ThreadCategory = 2
+)
+
 type Thread struct {
-	Id        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt int64     `json:"created_at"`
-	UpdatedAt int64     `json:"updated_at"`
+	Id        uuid.UUID      `json:"id"`
+	Name      string         `json:"name"`
+	Category  ThreadCategory `json:"category"`
+	MemberIds []string       `json:"member_ids"`
+	CreatedAt int64          `json:"created_at"`
+	UpdatedAt int64          `json:"updated_at"`
 }
 
 type MessageType uint8
@@ -26,14 +35,6 @@ type Message struct {
 	CreatedAt int64       `json:"created_at"`
 	UpdatedAt int64       `json:"updated_at"`
 }
-
-type ThreadMemberType uint8
-
-const (
-	ThreadMemberTypeOwner  ThreadMemberType = 1
-	ThreadMemberTypeAdmin  ThreadMemberType = 2
-	ThreadMemberTypeNormal ThreadMemberType = 3
-)
 
 type ThreadMember struct {
 	Id        uuid.UUID `json:"id"`

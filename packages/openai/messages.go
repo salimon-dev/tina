@@ -44,9 +44,12 @@ import (
 
 func ParsePlainMessage(message *types.Message) (*CompletionMessage, error) {
 	var result CompletionMessage
-	if message.Username == "tina" {
+	switch message.Username {
+	case "tina":
 		result.Role = "assistant"
-	} else {
+	case "context":
+		result.Role = "system"
+	default:
 		result.Role = "user"
 	}
 	result.Content = message.Body

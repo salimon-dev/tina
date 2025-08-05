@@ -61,3 +61,27 @@ func SendPlainMessage(threadId string, body string) error {
 	_, err = SendHttpRequest("POST", "/member/messages/send", payloadBytes)
 	return err
 }
+
+func StartThread(targetId string, name string, category types.ThreadCategory) (*types.Thread, error) {
+	type Payload struct {
+		TargetId string               `json:"target_id"`
+		Name     string               `json:"name"`
+		Category types.ThreadCategory `json:"category"`
+	}
+	payload := Payload{
+		TargetId: targetId,
+		Name:     name,
+		Category: category,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	responseData, err := SendHttpRequest("POST", "/member/threads/start", payloadBytes)
+	if err != nil {
+		return nil, err
+	}
+	var response types.Thread
+	err = json.Unmarshal(responseData, &response)
+	return &response, err
+}
