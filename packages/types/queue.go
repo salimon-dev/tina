@@ -18,4 +18,5 @@ type MessageEvent struct {
 type TransactionEvent struct {
 	Action      string      `json:"action"`
 	Transaction Transaction `json:"transaction"`
+	Type        string      `json:"type"`
 }

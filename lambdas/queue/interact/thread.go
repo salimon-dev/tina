@@ -23,7 +23,7 @@ func HandleMessageEvent(ctx context.Context, event *types.MessageEvent) error {
 		return err
 	}
 	fmt.Println("passed the completion")
-	err = nexus.SendPlainMessage(event.Message.ThreadId.String(), response.Body)
+	err = nexus.SendMessage(event.Message.ThreadId.String(), response.Body, types.MessageTypeText)
 	if err != nil {
 		return err
 	}

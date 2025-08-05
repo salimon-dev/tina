@@ -103,4 +103,17 @@ func SubmitInvoice(usageCredit uint64, user *types.User) {
 		return
 	}
 	fmt.Printf("invoice %s for user %s created successfully\n", invoice.Id.String(), user.Username)
+	err = SendTransactionMessage(transaction)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func SendTransactionMessage(transaction *types.Transaction) error {
+	thread, err := nexus.StartThread(transaction.TargetId.String(), "", types.ThreadCategroyPayment)
+	if err != nil {
+		return err
+	}
+	err = nexus.SendMessage(thread.Id.String(), transaction.Id.String(), types.MessageTypeTransaction)
+	return err
 }

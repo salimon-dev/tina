@@ -40,3 +40,7 @@ func (r *User) BeforeUpdate(tx *gorm.DB) (err error) {
 func CreditFromUsage(usage uint64) uint64 {
 	return usage / 1000
 }
+
+func UsageFromCredit(credit uint64) uint64 {
+	return credit * 1000
+}
