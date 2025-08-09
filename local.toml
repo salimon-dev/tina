@@ -1,0 +1,19 @@
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "salimon-tina-local"
+parameter_overrides = "Env=local"
+
+[default.build.parameters]
+cached = true
+parallel = false
+
+[default.validate.parameters]
+lint = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"

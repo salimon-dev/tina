@@ -1,0 +1,12 @@
+go 1.24.4
+
+use (
+	./lambdas/invoices
+	./lambdas/migrate
+	./lambdas/queue/interact
+	./packages/config
+	./packages/db
+	./packages/nexus
+	./packages/openai
+	./packages/types
+)

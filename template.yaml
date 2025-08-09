@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  Env:
+    Type: String
+    Default: "dev"
+
+Description: "Tina Service"
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+    Handler: bootstrap
+    Runtime: provided.al2
+    Layers:
+      - !Ref EnvLayer
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        ENV: !Ref Env
+
+Resources:
+  # API Gateway
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub "tina-api-${Env}"
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - "*"
+        AllowHeaders:
+          - "*"
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: main
+      AutoDeploy: true
+  # Config layer
+  EnvLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "tina-env-${Env}"
+      ContentUri: layers/env/
+      CompatibleRuntimes:
+        - provided.al2
+      Description: "Environment variables layer for tina service"
+  # IAM Role for resources
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "tina-lambda-${Env}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: logs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: sqs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:sendMessage
+                  - sqs:receiveMessage
+                  - sqs:deleteMessage
+                  - sqs:getQueueAttributes
+                Resource: "*"
+  # SQS
+  # SQS -- Interact Event Queue
+  InteractQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "tina-${Env}-interact"
+  InteractQueueHandler:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Timeout: 30
+      FunctionName: !Sub "tina-${Env}-interact-queue-handler"
+      CodeUri: lambdas/queue/interact/
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt InteractQueue.Arn
+            BatchSize: 10
+  Migrate:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Timeout: 30
+      FunctionName: !Sub "tina-${Env}-migrate"
+      CodeUri: lambdas/migrate/
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        CatchAll:
+          Type: HttpApi
+          Properties:
+            Path: /migrate
+            Method: GET
+            ApiId: !Ref HttpApi
+  Invoices:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Timeout: 30
+      FunctionName: !Sub "tina-${Env}-invoices"
+      CodeUri: lambdas/invoices/
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        ScheduledInvocation:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 */12 * * ? *)
+            Name: !Sub "tina-${Env}-invoices-schedule"
+            Description: "check users usage every 12 hours"
